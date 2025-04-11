@@ -1,9 +1,9 @@
 import { Text, View, TextInput, TouchableOpacity, FlatList, Alert } from "react-native";
 import { styles } from "./styles";
 import { Task } from "../../components/task";
-import dayjs from "dayjs";
 import { useState } from "react";
 import { TaskProps } from "../../model/task.interface";
+import { Image } from "react-native";
 
 export function Home() {
 
@@ -78,19 +78,16 @@ export function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.eventName}>
-        Todo-List
-      </Text>
-      <Text style={styles.eventDate}>
-        {dayjs().format('dddd, DD [de] MMMM [de] YYYY')}
-      </Text>
-      <Text style={styles.completedTasksText}>
-        Tarefas finalizadas: {taskCount}/{tasks.length}
-      </Text>
+      <View style={styles.logoContainer}>
+        <Image 
+          source={require("../../../assets/Logo.png")} 
+          style={styles.logo} 
+        />
+      </View>
       <View style={styles.form}>
         <TextInput
-          placeholder="Insira uma nova tarefa"
-          placeholderTextColor="#555"
+          placeholder="Adicione uma nova tarefa"
+          placeholderTextColor="#808080"
           style={styles.input}
           onChangeText={setNewTask}
           value={newTask}
@@ -100,6 +97,25 @@ export function Home() {
             +
           </Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.countersContainer}>
+        <View style={styles.counterCreated}>
+          <Text style={styles.counterLabelCreated}>Criadas</Text>
+          <View style={styles.counterValue}>
+            <Text style={styles.counterText}>{tasks.length}</Text>
+          </View>
+        </View>
+        <View style={styles.counterConcluded}>
+          <Text style={styles.counterLabelConcluded}>Concluídas</Text>
+          <View style={styles.counterValue}>
+            <Text style={styles.counterText}>
+              {tasks.filter(task => task.done).length}
+            </Text>
+          </View>
+        </View>
+      </View>
+      <View style={styles.lineContainer}>
+        <View style={styles.line} />
       </View>
       <FlatList
         data={tasks}
@@ -113,9 +129,18 @@ export function Home() {
         )}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
-          <Text style={styles.emptyListText}>
-            Nenhuma tarefa cadastrada
-          </Text>
+          <View style={styles.emptyListContainer}>
+            <Image 
+              source={require("../../../assets/Clipboard.png")}
+              style={styles.emptyListIcon} 
+            />
+            <Text style={styles.emptyListText}>
+              Você ainda não tem tarefas cadastradas
+            </Text>
+            <Text style={styles.emptyListSubText}>
+              Crie tarefas e organize seus itens a fazer
+            </Text>
+          </View>
         )}
       />
     </View>
