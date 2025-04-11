@@ -1,0 +1,119 @@
+import { Text, View, TextInput, TouchableOpacity, FlatList, Alert } from "react-native";
+import { styles } from "./styles";
+import { Task } from "../../components/task";
+import dayjs from "dayjs";
+import { useState } from "react";
+import { TaskProps } from "../../model/task.interface";
+
+export function Home() {
+
+  const [tasks, setTasks] = useState<TaskProps[]>([]);
+  const [newTask, setNewTask] = useState('');
+
+  function handleTaskAdd() {
+
+    if (!newTask) {
+      return Alert.alert('Erro', 'Digite o nome da tarefa para adicionar!');
+    }
+
+    if(tasks.some(task => task.name === newTask)) {
+      return Alert.alert('Erro', 'Esta tarefa já foi adicionado!');
+    }
+
+    Alert.alert('Adicionar tarefa', `Deseja realmente adicionar a tarefa a seguir? \n\n\"${newTask}\"`, 
+      [ 
+        { 
+          text: 'Cancelar',
+          style: 'cancel' 
+        }, 
+        { 
+          text: 'Adicionar', 
+          onPress: () => (
+            setTasks([...tasks, {name: newTask, done: false }]),
+            setNewTask(''),
+            Alert.alert('Adicionado', 'Tarefa adicionada com sucesso!')
+          )
+        } 
+      ]);
+  }
+
+  function handleTaskRemove(name: string) {
+
+    const taskIndex = tasks.findIndex(item => item.name === name);
+
+    if(taskIndex === -1) {
+      return Alert.alert('Erro', 'Tarefa não encontrado!');
+    }
+
+    Alert.alert('Remover tarefa', `Deseja remover? \n\n\"${name}\"`, [
+      {
+        text: 'Não',
+        style: 'cancel',
+      },
+      {
+        text: 'Sim',
+        onPress: () => (
+          tasks.splice(taskIndex, 1),
+          setTasks([...tasks]),
+          Alert.alert('Deletado', `A tarefa \"${name}\" foi removido com sucesso!`)
+        ),
+      },
+    ]);
+  }
+
+  function handleTaskCheck(name: string) {
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.name === name ? { ...task, done: !task.done } : task
+      )
+    );
+  }
+
+  const completedTasksCount = tasks.filter(task => task.done).length; // Contador de tarefas finalizadas
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.eventName}>
+        Todo-List
+      </Text>
+      <Text style={styles.eventDate}>
+        {dayjs().format('dddd, DD [de] MMMM [de] YYYY')}
+      </Text>
+      <Text style={styles.completedTasksText}>
+        Tarefas finalizadas: {completedTasksCount}/{tasks.length}
+      </Text>
+      <View style={styles.form}>
+        <TextInput
+          placeholder="Insira uma nova tarefa"
+          placeholderTextColor="#555"
+          style={styles.input}
+          onChangeText={setNewTask}
+          value={newTask}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleTaskAdd}>
+          <Text style={styles.buttonText}>
+            +
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <FlatList
+        data={tasks}
+        keyExtractor={item => item.name}
+        renderItem={({ item }) => (
+          <Task 
+            name={item.name} 
+            done={item.done}
+            onRemove={() => handleTaskRemove(item.name)} 
+            onCheck={() => handleTaskCheck(item.name)}/>
+        )}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <Text style={styles.emptyListText}>
+            Nenhuma tarefa cadastrada
+          </Text>
+        )}
+      />
+    </View>
+  );
+}
+
