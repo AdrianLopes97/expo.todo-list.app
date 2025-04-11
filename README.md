@@ -1,5 +1,7 @@
 # Todo List App
 ![Imagem do App](assets/image.png)
+
+
 O **Todo List App** é um aplicativo mobile desenvolvido em **React Native** utilizando **Expo**. Ele permite gerenciar tarefas de forma simples e eficiente, com funcionalidades para adicionar, remover e listar tarefas.
 
 ## Funcionalidades
