@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 16,
-    borderRadius: 8,
+    borderRadius: 5,
   },
   form: {
     flexDirection: 'row',
