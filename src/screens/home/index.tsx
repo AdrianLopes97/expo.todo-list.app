@@ -9,6 +9,7 @@ export function Home() {
 
   const [tasks, setTasks] = useState<TaskProps[]>([]);
   const [newTask, setNewTask] = useState('');
+  const [taskCount, setTaskCount] = useState(0);
 
   function handleTaskAdd() {
 
@@ -67,9 +68,13 @@ export function Home() {
         task.name === name ? { ...task, done: !task.done } : task
       )
     );
-  }
 
-  const completedTasksCount = tasks.filter(task => task.done).length; // Contador de tarefas finalizadas
+    setTaskCount(prevCount => {
+      const taskIndex = tasks.findIndex(task => task.name === name);
+      const task = tasks[taskIndex];
+      return task.done ? prevCount - 1 : prevCount + 1;
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -80,7 +85,7 @@ export function Home() {
         {dayjs().format('dddd, DD [de] MMMM [de] YYYY')}
       </Text>
       <Text style={styles.completedTasksText}>
-        Tarefas finalizadas: {completedTasksCount}/{tasks.length}
+        Tarefas finalizadas: {taskCount}/{tasks.length}
       </Text>
       <View style={styles.form}>
         <TextInput
